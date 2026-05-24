@@ -11,7 +11,7 @@ PrimeLab là web app học tập và thực nghiệm mật mã, tập trung vào
 - Mã hóa, giải mã, ký số và xác minh chữ ký RSA.
 - Tính khóa bí mật `d` từ `e` và `n` bằng phân tích thừa số cho các modulus nhỏ/phù hợp demo.
 - Lưu lịch sử thao tác, xóa từng bản ghi và tải kết quả prime/RSA/log dạng `.txt`.
-- Chatbot học liệu RSA/ATTT, dùng Gemini nếu có `GEMINI_API_KEY`, nếu không dùng OpenAI khi có `OPENAI_API_KEY`.
+- Chatbot học liệu RSA/ATTT, dùng Gemini có `GEMINI_API_KEY` đã được huấn luyện để trả lời những câu hỏi cơ bản về app.
 
 ## Cài đặt
 
@@ -77,4 +77,4 @@ Lệnh này kiểm tra cú pháp các file chính và chạy script validate lõ
 
 ## Lưu ý
 
-PrimeLab phục vụ học tập, demo và nghiên cứu thuật toán. Khóa RSA sinh bởi dự án không nên dùng cho hệ thống production. Các số 8192/16384 bit có thể mất thời gian tùy máy và chế độ tìm kiếm; dùng bit nhỏ hơn khi cần demo nhanh.
+PrimeLab phục vụ học tập, demo và nghiên cứu thuật toán. Khóa RSA sinh bởi dự án không nên dùng cho hệ thống production. Các số 8192/16384 bit lớn và có thể mất thời gian tùy máy và chế độ tìm kiếm.
