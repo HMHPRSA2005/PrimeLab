@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mã hóa / Giải mã RSA | PrimeLab</title>
+    <link rel="stylesheet" href="/css/dashboard.css" />
+  </head>
+  <body>
+    <div class="app-layout">
+      <aside class="sidebar">
+        <a class="brand" href="/dashboard"><img src="/assets/logo_primelab.png" alt="Logo" class="brand-logo"><span><strong>PrimeLab</strong><small>Cyber crypto lab</small></span></a>
+        <nav class="sidebar-nav">
+          <a data-nav href="/dashboard" data-i18n="nav_overview">Tổng quan</a>
+          <a data-nav href="/prime-check" data-i18n="nav_prime_check">Kiểm tra số nguyên tố</a>
+          <a data-nav href="/prime-search" data-i18n="nav_prime_search">Tìm kiếm số nguyên tố</a>
+          <a data-nav href="/rsa-keygen" data-i18n="nav_rsa_keygen">Tạo khóa RSA</a>
+          <a data-nav href="/rsa-crypto" data-i18n="nav_rsa_crypto">Mã hóa / Giải mã RSA</a>
+          <a data-nav href="/history" data-i18n="nav_history">Nhật ký kết quả</a>
+          <a data-nav href="/downloads" data-i18n="nav_downloads">Tải xuống</a>
+        </nav>
+        <div class="sidebar-footer"><button class="logout-btn" data-logout type="button" data-i18n="logout">Đăng xuất</button></div>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div><h1 data-i18n="title_rsa_crypto">Mã hóa / Giải mã RSA</h1><p data-i18n="desc_rsa_crypto">Thực nghiệm các phép toán mật mã RSA chuyên sâu.</p></div>
+          <div class="topbar-actions">
+            <button id="lang-toggle" class="lang-toggle-btn">VI/EN</button>
+            <span class="user-pill" data-session-user></span>
+          </div>
+        </header>
+        <section class="content grid">
+          <article class="card">
+            <div class="tabs">
+              <button class="tab-btn active" data-tab="#encrypt-panel" type="button">Mã hóa</button>
+              <button class="tab-btn" data-tab="#decrypt-panel" type="button">Giải mã</button>
+              <button class="tab-btn" data-tab="#sign-panel" type="button">Ký hash</button>
+              <button class="tab-btn" data-tab="#verify-panel" type="button">Xác minh chữ ký</button>
+              <button class="tab-btn" data-tab="#mod-inverse-panel" type="button">Tính d</button>
+            </div>
+            <div id="encrypt-panel" class="tab-panel active" data-tab-panel>
+              <p class="pipeline">c = <span>m^e mod n</span></p>
+              <form id="encrypt-form">
+                <label class="field"><span>Thông điệp số m</span><textarea name="message" placeholder="Nhập thông điệp dạng số, nhỏ hơn n"></textarea></label>
+                <label class="field"><span>n</span><textarea name="n" placeholder="Nhập n"></textarea></label>
+                <label class="field"><span>e</span><input name="e" value="65537" /></label>
+                <button class="primary-btn" type="submit">Mã hóa</button>
+              </form>
+            </div>
+            <div id="decrypt-panel" class="tab-panel" data-tab-panel>
+              <p class="pipeline">m = <span>c^d mod n</span></p>
+              <form id="decrypt-form">
+                <label class="field"><span>Bản mã số c</span><textarea name="cipherNumber" placeholder="Nhập bản mã"></textarea></label>
+                <label class="field"><span>n</span><textarea name="n" placeholder="Nhập n"></textarea></label>
+                <label class="field"><span>Số mũ bí mật d</span><textarea name="d" placeholder="Nhập d"></textarea></label>
+                <button class="primary-btn" type="submit">Giải mã</button>
+              </form>
+            </div>
+            <div id="sign-panel" class="tab-panel" data-tab-panel>
+              <p class="pipeline">s = <span>Hash(message)^d mod n</span></p>
+              <form id="sign-form">
+                <label class="field"><span>Thuật toán băm</span><select name="hashAlgorithm"><option>sha256</option><option>sha384</option><option>sha512</option><option>sha3-256</option><option>sha3-512</option></select></label>
+                <label class="field"><span>Thông điệp</span><textarea name="message" placeholder="Nhập thông điệp cần ký"></textarea></label>
+                <label class="field"><span>n</span><textarea name="n" placeholder="Nhập n"></textarea></label>
+                <label class="field"><span>Số mũ bí mật d</span><textarea name="d" placeholder="Nhập d"></textarea></label>
+                <button class="primary-btn" type="submit">Ký thông điệp</button>
+              </form>
+            </div>
+            <div id="verify-panel" class="tab-panel" data-tab-panel>
+              <p class="pipeline">Hash(message) <b>==</b> <span>s^e mod n</span></p>
+              <form id="verify-form">
+                <label class="field"><span>Thuật toán băm</span><select name="hashAlgorithm"><option>sha256</option><option>sha384</option><option>sha512</option><option>sha3-256</option><option>sha3-512</option></select></label>
+                <label class="field"><span>Thông điệp</span><textarea name="message" placeholder="Nhập thông điệp gốc"></textarea></label>
+                <label class="field"><span>Chữ ký số s</span><textarea name="signatureNumber" placeholder="Nhập chữ ký số"></textarea></label>
+                <label class="field"><span>n</span><textarea name="n" placeholder="Nhập n"></textarea></label>
+                <label class="field"><span>e</span><input name="e" value="65537" /></label>
+                <button class="primary-btn" type="submit">Xác minh chữ ký</button>
+              </form>
+            </div>
+            <div id="mod-inverse-panel" class="tab-panel" data-tab-panel>
+              <p class="pipeline">n <b>→</b> p, q <b>→</b> d = <span>e^-1 mod phi(n)</span></p>
+              <p class="form-note">Nhập n để hệ thống phân tích ra p, q, sau đó tính phi(n) và tìm d. (Chỉ áp dụng cho n nhỏ)</p>
+              <form id="mod-inverse-form">
+                <label class="field"><span>Số mũ công khai e</span><input name="e" value="65537" /></label>
+                <label class="field"><span>n</span><textarea name="n" placeholder="Nhập số n"></textarea></label>
+                <button class="primary-btn" type="submit">Phân tích n và Tính d</button>
+              </form>
+            </div>
+            <p class="error-box" data-error hidden></p>
+          </article>
+          <article id="result-section" class="card hidden">
+            <div class="copy-row"><div><p class="eyebrow">Kết quả</p><h2>Kết quả RSA</h2></div><button class="secondary-btn" data-copy-target="#crypto-result" type="button">Sao chép</button></div>
+            <pre id="crypto-result" class="code-block"></pre>
+          </article>
+        </section>
+      </main>
+    </div>
+    <script src="/js/shared.js"></script>
+    <script src="/js/rsa-crypto.js"></script>
+  </body>
+</html>

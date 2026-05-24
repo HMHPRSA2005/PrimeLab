@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | PrimeLab</title>
+    <link rel="stylesheet" href="/css/dashboard.css" />
+  </head>
+  <body>
+    <div class="app-layout">
+      <aside class="sidebar">
+        <a class="brand" href="/dashboard"><img src="/assets/logo_primelab.png" alt="Logo" class="brand-logo"><span><strong>PrimeLab</strong><small>Cyber crypto lab</small></span></a>
+        <nav class="sidebar-nav">
+          <a data-nav href="/dashboard" data-i18n="nav_overview">Tổng quan</a>
+          <a data-nav href="/prime-check" data-i18n="nav_prime_check">Kiểm tra số nguyên tố</a>
+          <a data-nav href="/prime-search" data-i18n="nav_prime_search">Tìm kiếm số nguyên tố</a>
+          <a data-nav href="/rsa-keygen" data-i18n="nav_rsa_keygen">Tạo khóa RSA</a>
+          <a data-nav href="/rsa-crypto" data-i18n="nav_rsa_crypto">Mã hóa / Giải mã RSA</a>
+          <a data-nav href="/history" data-i18n="nav_history">Nhật ký kết quả</a>
+          <a data-nav href="/downloads" data-i18n="nav_downloads">Tải xuống</a>
+        </nav>
+        <div class="sidebar-footer"><button class="logout-btn" data-logout type="button" data-i18n="logout">Đăng xuất</button></div>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div><h1 data-i18n="title_overview">Chào mừng đến với PrimeLab</h1><p data-i18n="desc_overview">Hệ thống quản lý và thực nghiệm mật mã học.</p></div>
+          <div class="topbar-actions">
+            <button id="lang-toggle" class="lang-toggle-btn">VI/EN</button>
+            <span class="user-pill" data-session-user></span>
+          </div>
+        </header>
+        <section class="content grid">
+          <div class="grid three">
+            <a class="action-card" href="/prime-check"><p class="eyebrow">Kiểm tra prime</p><h2>Kiểm tra số nguyên tố</h2><p data-i18n="card_prime_check_desc">Xác định tính nguyên tố của số lớn bằng thuật toán Miller-Rabin với cấu hình linh hoạt.</p></a>
+            <a class="action-card" href="/prime-search"><p class="eyebrow">Tìm prime</p><h2>Tìm kiếm số nguyên tố</h2><p data-i18n="card_prime_search_desc">Tìm kiếm các số nguyên tố xác suất hiệu quả thông qua cơ chế sinh ngẫu nhiên và kiểm tra BigInt.</p></a>
+            <a class="action-card" href="/rsa-keygen"><p class="eyebrow">Tạo khóa RSA</p><h2>Tạo khóa RSA</h2><p data-i18n="card_rsa_keygen_desc">Khởi tạo bộ tham số khóa RSA đầy đủ phục vụ nhu cầu mô phỏng và nghiên cứu mật mã.</p></a>
+            <a class="action-card" href="/rsa-crypto"><p class="eyebrow">Mật mã RSA</p><h2>Mã hóa / Giải mã</h2><p data-i18n="card_rsa_crypto_desc">Thực hiện các thao tác mã hóa và giải mã dữ liệu dựa trên nguyên lý toán học của hệ mật RSA.</p></a>
+            <a class="action-card" href="/history"><p class="eyebrow">Nhật ký thử nghiệm</p><h2>Nhật ký kết quả</h2><p data-i18n="card_history_desc">Quản lý và truy xuất lịch sử các hoạt động kiểm tra, tìm kiếm và tác vụ mật mã.</p></a>
+            <a class="action-card" href="/downloads"><p class="eyebrow">Xuất dữ liệu</p><h2>Tải xuống</h2><p data-i18n="card_downloads_desc">Xuất và lưu trữ kết quả tìm kiếm, các bộ khóa RSA và nhật ký thực nghiệm.</p></a>
+          </div>
+          <article class="card">
+            <p class="eyebrow">Quy trình mật mã</p>
+            <h2 data-i18n="pipeline_title">Quy trình xử lý PrimeLab</h2>
+            <div class="pipeline">
+              <span>Sinh ứng viên</span> → Sàng prime nhỏ → Miller-Rabin → <span>Prime xác suất</span> → Khóa RSA
+            </div>
+            <p data-i18n="pipeline_desc">Hệ thống xử lý trực tiếp bằng JavaScript BigInt và crypto.randomBytes, đảm bảo tính độc lập và bảo mật cao.</p>
+          </article>
+        </section>
+      </main>
+    </div>
+    <script src="/js/shared.js"></script>
+    <script>PrimeLab.initShell("/dashboard");</script>
+  </body>
+</html>

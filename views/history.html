@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nhật ký kết quả | PrimeLab</title>
+    <link rel="stylesheet" href="/css/dashboard.css" />
+  </head>
+  <body>
+    <div class="app-layout">
+      <aside class="sidebar">
+        <a class="brand" href="/dashboard"><img src="/assets/logo_primelab.png" alt="Logo" class="brand-logo"><span><strong>PrimeLab</strong><small>Cyber crypto lab</small></span></a>
+        <nav class="sidebar-nav">
+          <a data-nav href="/dashboard" data-i18n="nav_overview">Tổng quan</a>
+          <a data-nav href="/prime-check" data-i18n="nav_prime_check">Kiểm tra số nguyên tố</a>
+          <a data-nav href="/prime-search" data-i18n="nav_prime_search">Tìm kiếm số nguyên tố</a>
+          <a data-nav href="/rsa-keygen" data-i18n="nav_rsa_keygen">Tạo khóa RSA</a>
+          <a data-nav href="/rsa-crypto" data-i18n="nav_rsa_crypto">Mã hóa / Giải mã RSA</a>
+          <a data-nav href="/history" data-i18n="nav_history">Nhật ký kết quả</a>
+          <a data-nav href="/downloads" data-i18n="nav_downloads">Tải xuống</a>
+        </nav>
+        <div class="sidebar-footer"><button class="logout-btn" data-logout type="button" data-i18n="logout">Đăng xuất</button></div>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div><h1 data-i18n="title_history">Nhật ký kết quả</h1><p data-i18n="desc_history">Lịch sử chi tiết các lần thực nghiệm.</p></div>
+          <div class="topbar-actions">
+            <button id="lang-toggle" class="lang-toggle-btn">VI/EN</button>
+            <span class="user-pill" data-session-user></span>
+          </div>
+        </header>
+        <section class="content grid">
+          <article class="card">
+            <div class="copy-row">
+              <div><p class="eyebrow">Nhật ký thử nghiệm</p><h2>Danh sách thao tác</h2></div>
+              <label class="field"><span>Lọc thao tác</span><select id="action-filter"></select></label>
+            </div>
+            <p class="error-box" data-error hidden></p>
+            <table class="table">
+              <thead><tr><th>Thời gian</th><th>Thao tác</th><th>Trạng thái</th><th>Tóm tắt</th><th>Lệnh</th></tr></thead>
+              <tbody id="history-table-body"></tbody>
+            </table>
+          </article>
+          <article id="detail-panel" class="card detail-panel hidden">
+            <div class="copy-row"><div><p class="eyebrow">Dữ liệu</p><h2>Chi tiết bản ghi</h2></div><button class="secondary-btn" data-copy-target="#detail-output" type="button">Sao chép</button></div>
+            <pre id="detail-output" class="code-block"></pre>
+          </article>
+        </section>
+      </main>
+    </div>
+    <script src="/js/shared.js"></script>
+    <script src="/js/history.js"></script>
+  </body>
+</html>

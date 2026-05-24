@@ -1,0 +1,82 @@
+MUC LUC BAO CAO DU AN PRIMELAB
+
+1. Gioi thieu chung
+   1.1. Ly do chon de tai
+   1.2. Muc tieu cua ung dung PrimeLab
+   1.3. Pham vi va doi tuong su dung
+
+2. Co so ly thuyet
+   2.1. So nguyen to va vai tro trong mat ma hoc
+   2.2. Thuat toan Miller-Rabin kiem tra tinh nguyen to
+   2.3. He mat ma RSA
+   2.4. Ham bam mat khau va bcrypt
+   2.5. Cac chuan ham bam SHA-2, SHA-3 va BLAKE2
+   2.6. HMAC va xac thuc thong diep
+   2.7. PBKDF2 va dan xuat khoa tu mat khau
+   2.8. Token xac thuc JWT
+
+3. Phan tich yeu cau he thong
+   3.1. Yeu cau chuc nang
+   3.2. Yeu cau phi chuc nang
+   3.3. Yeu cau bao mat va phan quyen nguoi dung
+
+4. Thiet ke he thong
+   4.1. Kien truc tong the Node.js va Express
+   4.2. Cau truc thu muc du an
+   4.3. Thiet ke luong dang ky va dang nhap
+   4.4. Thiet ke luong kiem tra so nguyen to
+   4.5. Thiet ke luong tim kiem so nguyen to
+   4.6. Thiet ke luong tao khoa RSA
+   4.7. Thiet ke luong ma hoa va giai ma RSA
+   4.8. Thiet ke luong Hash / HMAC / KDF
+   4.9. Thiet ke lich su thao tac va tai xuong ket qua
+
+5. Cac thanh phan mat ma va bao mat trong du an
+   5.1. Su dung bcrypt de bam va kiem tra mat khau
+   5.2. Su dung JWT de tao va xac thuc phien dang nhap
+   5.3. Su dung crypto.randomBytes de sinh ung vien so nguyen to
+   5.4. Su dung crypto.randomUUID de tao ma lich su thao tac
+   5.5. Su dung RSA cho ma hoa, giai ma va tinh khoa bi mat
+   5.6. Su dung SHA-2, SHA-3 va BLAKE2 de kiem tra toan ven du lieu
+   5.7. Su dung HMAC de xac thuc tinh toan ven va nguon goc thong diep
+   5.8. Su dung PBKDF2 de dan xuat khoa tu mat khau va salt
+
+6. Cai dat va trien khai
+   6.1. Moi truong phat trien
+   6.2. Cai dat phu thuoc
+   6.3. Cau hinh va khoi dong server
+   6.4. Cau truc du lieu luu tru trong thu muc data
+
+7. Kiem thu ung dung
+   7.1. Kiem thu dang ky va dang nhap
+   7.2. Kiem thu kiem tra so nguyen to
+   7.3. Kiem thu tim kiem so nguyen to
+   7.4. Kiem thu tao khoa RSA
+   7.5. Kiem thu ma hoa va giai ma RSA
+   7.6. Kiem thu hash digest
+   7.7. Kiem thu HMAC
+   7.8. Kiem thu PBKDF2
+   7.9. Kiem thu lich su va tai xuong ket qua
+
+8. Danh gia ket qua
+   8.1. Ket qua dat duoc
+   8.2. Uu diem cua he thong
+   8.3. Han che con ton tai
+   8.4. Van de hieu nang khi xu ly so bit lon
+
+9. Huong phat trien
+   9.1. Nang cap bao mat cau hinh JWT_SECRET
+   9.2. Bo sung co so du lieu thay cho file JSON
+   9.3. Cai thien giao dien va trai nghiem nguoi dung
+   9.4. Bo sung test tu dong va logging
+   9.5. Mo rong cac thuat toan mat ma khac
+
+10. Ket luan
+
+11. Tai lieu tham khao
+
+PHU LUC
+A. Huong dan chay ung dung
+B. Mo ta cac API chinh
+C. Vi du du lieu dau vao va dau ra
+D. Ma nguon tieu bieu

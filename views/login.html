@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập | PrimeLab</title>
+    <link rel="stylesheet" href="/css/auth.css" />
+  </head>
+  <body>
+    <main class="auth-page">
+      <header class="auth-header">
+        <a class="brand" href="/login">
+          <img src="/assets/logo_primelab.png" alt="Logo" class="brand-logo">
+          <span><strong>PrimeLab</strong><small>16384-bit prime toolkit</small></span>
+        </a>
+        <nav class="auth-nav">
+          <button id="lang-toggle" class="lang-toggle-btn">VI/EN</button>
+          <a class="nav-pill active" href="/login" data-i18n="login">Đăng nhập</a>
+          <a class="nav-pill" href="/register" data-i18n="register">Đăng ký</a>
+        </nav>
+      </header>
+
+      <section class="auth-content">
+        <div class="auth-hero">
+          <p class="eyebrow">Không gian mật mã</p>
+          <h1>Không gian thực nghiệm số nguyên tố và RSA.</h1>
+          <p>Sàng số nguyên tố nhỏ, Miller-Rabin, sinh prime và mô phỏng RSA trong một giao diện web rõ ràng.</p>
+          <div class="pipeline-card">
+            <span>Quy trình prime</span>
+            <p>Sinh ứng viên → Sàng prime nhỏ → Miller-Rabin → Prime xác suất</p>
+            <code>Node.js · BigInt · Express</code>
+          </div>
+        </div>
+
+        <form class="auth-card" data-auth-form="login">
+          <p class="eyebrow">Truy cập bảo mật</p>
+          <h2 data-i18n="login">Đăng nhập</h2>
+          <p class="form-note">Vào dashboard PrimeLab để chạy các thí nghiệm mật mã.</p>
+          <label class="field">
+            <span>Email</span>
+            <input name="email" type="email" placeholder="you@primelab.dev" required />
+          </label>
+          <label class="field">
+            <span>Mật khẩu</span>
+            <input name="password" type="password" placeholder="Nhập mật khẩu" required />
+          </label>
+          <button class="primary-btn" type="submit" data-i18n="login">Đăng nhập</button>
+          <p class="error-box" data-error hidden></p>
+          <p class="switch-text">Chưa có tài khoản? <a href="/register" data-i18n="register">Tạo tài khoản</a></p>
+        </form>
+      </section>
+    </main>
+    <script src="/js/shared.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+      (function() {
+        if (window.PrimeLab) {
+          PrimeLab.applyTranslations();
+          const toggleBtn = document.getElementById("lang-toggle");
+          if (toggleBtn) {
+            toggleBtn.addEventListener("click", () => {
+              PrimeLab.setLang(PrimeLab.getLang() === "vi" ? "en" : "vi");
+            });
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>

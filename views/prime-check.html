@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kiểm tra số nguyên tố | PrimeLab</title>
+    <link rel="stylesheet" href="/css/dashboard.css" />
+  </head>
+  <body>
+    <div class="app-layout">
+      <aside class="sidebar">
+        <a class="brand" href="/dashboard"><img src="/assets/logo_primelab.png" alt="Logo" class="brand-logo"><span><strong>PrimeLab</strong><small>Cyber crypto lab</small></span></a>
+        <nav class="sidebar-nav">
+          <a data-nav href="/dashboard" data-i18n="nav_overview">Tổng quan</a>
+          <a data-nav href="/prime-check" data-i18n="nav_prime_check">Kiểm tra số nguyên tố</a>
+          <a data-nav href="/prime-search" data-i18n="nav_prime_search">Tìm kiếm số nguyên tố</a>
+          <a data-nav href="/rsa-keygen" data-i18n="nav_rsa_keygen">Tạo khóa RSA</a>
+          <a data-nav href="/rsa-crypto" data-i18n="nav_rsa_crypto">Mã hóa / Giải mã RSA</a>
+          <a data-nav href="/history" data-i18n="nav_history">Nhật ký kết quả</a>
+          <a data-nav href="/downloads" data-i18n="nav_downloads">Tải xuống</a>
+        </nav>
+        <div class="sidebar-footer"><button class="logout-btn" data-logout type="button" data-i18n="logout">Đăng xuất</button></div>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div><h1 data-i18n="title_prime_check">Kiểm tra số nguyên tố</h1><p data-i18n="desc_prime_check">Kiểm tra nhanh tính nguyên tố bằng Miller-Rabin nhiều vòng.</p></div>
+          <div class="topbar-actions">
+            <button id="lang-toggle" class="lang-toggle-btn">VI/EN</button>
+            <span class="user-pill" data-session-user></span>
+          </div>
+        </header>
+        <section class="content grid">
+          <article class="card">
+            <form id="prime-check-form">
+              <label class="field"><span>Số cần kiểm tra</span><textarea name="number" placeholder="Nhập số hệ 10 hoặc 0x..." required></textarea></label>
+              <div class="form-grid">
+                <label class="field"><span>Độ dài bit yêu cầu</span><select name="bits"><option>4</option><option>8</option><option>16</option><option>32</option><option>64</option><option>128</option><option>256</option><option>512</option><option>1024</option><option>2048</option><option selected>4096</option><option>8192</option><option>16384</option></select></label>
+                <label class="field"><span>Số vòng kiểm tra</span><select name="rounds"><option>16</option><option>32</option><option>50</option><option selected>64</option></select></label>
+                <div class="field"><span>&nbsp;</span><button class="primary-btn" type="submit">Kiểm tra</button></div>
+              </div>
+              <p class="error-box" data-error hidden></p>
+            </form>
+          </article>
+          <article id="result-section" class="card hidden">
+            <div><p class="eyebrow">Kết quả</p><h2>Kết quả kiểm tra</h2></div>
+            <p id="result-message" class="result-message"></p>
+          </article>
+        </section>
+      </main>
+    </div>
+    <script src="/js/shared.js"></script>
+    <script src="/js/prime-check.js"></script>
+  </body>
+</html>

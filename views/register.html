@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng ký | PrimeLab</title>
+    <link rel="stylesheet" href="/css/auth.css" />
+  </head>
+  <body>
+    <main class="auth-page">
+      <header class="auth-header">
+        <a class="brand" href="/login">
+          <img src="/assets/logo_primelab.png" alt="Logo" class="brand-logo">
+          <span><strong>PrimeLab</strong><small>16384-bit prime toolkit</small></span>
+        </a>
+        <nav class="auth-nav">
+          <button id="lang-toggle" class="lang-toggle-btn">VI/EN</button>
+          <a class="nav-pill" href="/login" data-i18n="login">Đăng nhập</a>
+          <a class="nav-pill active" href="/register" data-i18n="register">Đăng ký</a>
+        </nav>
+      </header>
+
+      <section class="auth-content">
+        <div class="auth-hero">
+          <p class="eyebrow">Tạo không gian làm việc</p>
+          <h1>Tạo lab riêng cho kiểm thử prime và RSA.</h1>
+          <p>Tài khoản demo được lưu trong trình duyệt để bạn vào dashboard và chạy các API Express.</p>
+          <div class="pipeline-card">
+            <span>Quy trình RSA</span>
+            <p>Prime p, q → n = p · q → phi(n) → e, d → mã hóa/giải mã</p>
+            <code>Chỉ dùng demo · không dùng production</code>
+          </div>
+        </div>
+
+        <form class="auth-card" data-auth-form="register">
+          <p class="eyebrow">Tài khoản mới</p>
+          <h2 data-i18n="register">Đăng ký</h2>
+          <p class="form-note">Tạo tài khoản local để truy cập giao diện PrimeLab.</p>
+          <label class="field">
+            <span>Họ tên</span>
+            <input name="fullName" type="text" placeholder="Nguyễn Văn A" required />
+          </label>
+          <label class="field">
+            <span>Email</span>
+            <input name="email" type="email" placeholder="you@primelab.dev" required />
+          </label>
+          <label class="field">
+            <span>Mật khẩu</span>
+            <input name="password" type="password" placeholder="Ít nhất 6 ký tự" required />
+          </label>
+          <label class="field">
+            <span>Xác nhận mật khẩu</span>
+            <input name="confirmPassword" type="password" placeholder="Nhập lại mật khẩu" required />
+          </label>
+          <button class="primary-btn" type="submit" data-i18n="register">Đăng ký</button>
+          <p class="error-box" data-error hidden></p>
+          <p class="switch-text">Đã có tài khoản? <a href="/login" data-i18n="login">Đăng nhập</a></p>
+        </form>
+      </section>
+    </main>
+    <script src="/js/shared.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+      (function() {
+        if (window.PrimeLab) {
+          PrimeLab.applyTranslations();
+          const toggleBtn = document.getElementById("lang-toggle");
+          if (toggleBtn) {
+            toggleBtn.addEventListener("click", () => {
+              PrimeLab.setLang(PrimeLab.getLang() === "vi" ? "en" : "vi");
+            });
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>

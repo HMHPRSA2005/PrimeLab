@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PrimeLab - Cryptography Toolkit</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="landing-page">
+    <header class="landing-header">
+      <div class="brand">
+        <img src="/assets/logo_primelab.png" alt="Logo" class="brand-logo" />
+        <span><strong>PrimeLab</strong></span>
+      </div>
+      <nav class="landing-nav">
+        <button id="lang-toggle" class="lang-toggle-btn">VI/EN</button>
+        <a href="/login" class="nav-link" data-i18n="login">Đăng nhập</a>
+        <a href="/register" class="primary-btn-small" data-i18n="register"
+          >Đăng ký</a
+        >
+      </nav>
+    </header>
+
+    <main class="landing-main">
+      <section class="demo-carousel">
+        <div class="carousel-container" id="carousel">
+          <img
+            src="/assets/demo1.png"
+            alt="Demo 1"
+            class="carousel-item active"
+          />
+          <img src="/assets/demo2.png" alt="Demo 2" class="carousel-item" />
+          <img src="/assets/demo3.png" alt="Demo 3" class="carousel-item" />
+          <img src="/assets/demo4.png" alt="Demo 4" class="carousel-item" />
+          <img src="/assets/demo5.png" alt="Demo 5" class="carousel-item" />
+        </div>
+        <button
+          id="prev-btn"
+          class="carousel-nav-btn prev"
+          aria-label="Previous slide"
+        >
+          &lt;
+        </button>
+        <button
+          id="next-btn"
+          class="carousel-nav-btn next"
+          aria-label="Next slide"
+        >
+          &gt;
+        </button>
+        <div class="carousel-dots" id="carousel-dots">
+          <span class="dot active"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </section>
+
+      <section class="hero-text">
+        <h1 data-i18n="hero-title">
+          Công cụ Kiểm tra và Khởi tạo Số nguyên tố trên Web
+        </h1>
+        <p data-i18n="hero-desc">
+          PrimeLab cung cấp giải pháp toàn diện hỗ trợ sàng số nguyên tố nhỏ, thuật toán kiểm tra Miller-Rabin xác suất và khởi tạo số nguyên tố BigInt trực tiếp trên trình duyệt. Tích hợp công cụ tạo khóa và xử lý mật mã RSA chuyên nghiệp.
+        </p>
+      </section>
+    </main>
+
+    <script src="/js/shared.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

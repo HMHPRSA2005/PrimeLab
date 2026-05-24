@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tải xuống | PrimeLab</title>
+    <link rel="stylesheet" href="/css/dashboard.css" />
+  </head>
+  <body>
+    <div class="app-layout">
+      <aside class="sidebar">
+        <a class="brand" href="/dashboard"><img src="/assets/logo_primelab.png" alt="Logo" class="brand-logo"><span><strong>PrimeLab</strong><small>Cyber crypto lab</small></span></a>
+        <nav class="sidebar-nav">
+          <a data-nav href="/dashboard" data-i18n="nav_overview">Tổng quan</a>
+          <a data-nav href="/prime-check" data-i18n="nav_prime_check">Kiểm tra số nguyên tố</a>
+          <a data-nav href="/prime-search" data-i18n="nav_prime_search">Tìm kiếm số nguyên tố</a>
+          <a data-nav href="/rsa-keygen" data-i18n="nav_rsa_keygen">Tạo khóa RSA</a>
+          <a data-nav href="/rsa-crypto" data-i18n="nav_rsa_crypto">Mã hóa / Giải mã RSA</a>
+          <a data-nav href="/history" data-i18n="nav_history">Nhật ký kết quả</a>
+          <a data-nav href="/downloads" data-i18n="nav_downloads">Tải xuống</a>
+        </nav>
+        <div class="sidebar-footer"><button class="logout-btn" data-logout type="button" data-i18n="logout">Đăng xuất</button></div>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div><h1 data-i18n="title_downloads">Tải xuống dữ liệu</h1><p data-i18n="desc_downloads">Trích xuất kết quả thực nghiệm từ hệ hệ thống.</p></div>
+          <div class="topbar-actions">
+            <button id="lang-toggle" class="lang-toggle-btn">VI/EN</button>
+            <span class="user-pill" data-session-user></span>
+          </div>
+        </header>
+        <section class="content grid three">
+          <article class="card download-card">
+            <div><p class="eyebrow">Kết quả số nguyên tố</p><h2>Kết quả prime</h2><p>Tải danh sách probable prime đã tìm được.</p></div>
+            <a href="/api/download/prime-results">Tải prime-results.txt</a>
+          </article>
+          <article class="card download-card">
+            <div><p class="eyebrow">Khóa RSA</p><h2>Khóa RSA</h2><p>Tải các bộ khóa RSA đã sinh trong demo.</p></div>
+            <a href="/api/download/rsa-keys">Tải rsa-keys.txt</a>
+          </article>
+          <article class="card download-card">
+            <div><p class="eyebrow">Nhật ký thử nghiệm</p><h2>Nhật ký</h2><p>Tải toàn bộ lịch sử thao tác kiểm tra, tìm kiếm và RSA.</p></div>
+            <a href="/api/download/experiment-log">Tải experiment-log.txt</a>
+          </article>
+        </section>
+      </main>
+    </div>
+    <script src="/js/shared.js"></script>
+    <script src="/js/downloads.js"></script>
+  </body>
+</html>

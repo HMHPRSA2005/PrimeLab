@@ -1,0 +1,284 @@
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap");
+
+:root {
+  --blue: #2563eb;
+  --cyan: #06b6d4;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --line: #dbeafe;
+  --bg: #eff6ff;
+  --surface: #ffffff;
+  --soft: #f8fafc;
+  --danger: #ef4444;
+  --shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+  font-family: "Be Vietnam Pro", "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 80% 14%, rgba(6, 182, 212, 0.24), transparent 28%),
+    linear-gradient(115deg, var(--bg), #ffffff 50%, #eaf4ff);
+}
+
+.auth-page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: 24px 40px;
+}
+
+.auth-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.72;
+  background-image:
+    linear-gradient(rgba(37, 99, 235, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.08) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(circle at 36% 44%, #000 0%, transparent 72%);
+}
+
+.auth-header,
+.auth-content {
+  position: relative;
+  z-index: 1;
+}
+
+.auth-header {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 0 24px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 12px 40px rgba(37, 99, 235, 0.08);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  color: #fff;
+  background: var(--blue);
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.brand-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.brand strong,
+.brand small {
+  display: block;
+}
+
+.brand strong {
+  font-size: 20px;
+}
+
+.brand small {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.auth-nav {
+  display: flex;
+  gap: 12px;
+}
+
+.nav-pill {
+  min-width: 92px;
+  height: 44px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--blue);
+  background: #fff;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.nav-pill.active {
+  color: #fff;
+  border-color: var(--blue);
+  background: var(--blue);
+}
+
+.auth-content {
+  display: grid;
+  grid-template-columns: 1fr 480px;
+  gap: 80px;
+  align-items: center;
+  width: 1240px;
+  margin: 86px auto 0;
+}
+
+.auth-hero .eyebrow,
+.auth-card .eyebrow {
+  margin: 0 0 16px;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.auth-hero h1 {
+  margin: 0;
+  max-width: 620px;
+  font-size: 58px;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+.auth-hero p {
+  max-width: 590px;
+  color: var(--muted);
+  font-size: 19px;
+  line-height: 1.65;
+}
+
+.pipeline-card {
+  width: 540px;
+  margin-top: 48px;
+  border-radius: 20px;
+  padding: 26px 28px;
+  color: #fff;
+  background: var(--ink);
+  box-shadow: var(--shadow);
+}
+
+.pipeline-card span {
+  color: var(--cyan);
+  font-weight: 900;
+}
+
+.pipeline-card code {
+  display: block;
+  margin-top: 14px;
+  color: #bfdbfe;
+  font-family: "Cascadia Mono", Consolas, monospace;
+}
+
+.auth-card {
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 40px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.auth-card h2 {
+  margin: 0;
+  font-size: 34px;
+  letter-spacing: -0.04em;
+}
+
+.form-note {
+  margin: 8px 0 28px;
+  color: var(--muted);
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.field input {
+  height: 52px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0 16px;
+  color: var(--ink);
+  outline: 0;
+  font: inherit;
+}
+
+.field input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.primary-btn {
+  width: 100%;
+  height: 50px;
+  border: 0;
+  border-radius: 12px;
+  color: #fff;
+  background:
+    linear-gradient(90deg, transparent 55%, rgba(6, 182, 212, 0.72)),
+    var(--blue);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.primary-btn:disabled {
+  opacity: 0.68;
+  cursor: not-allowed;
+}
+
+.error-box {
+  min-height: 22px;
+  margin: 12px 0 0;
+  color: var(--danger);
+  font-size: 14px;
+}
+
+.switch-text {
+  margin: 20px 0 0;
+  color: var(--muted);
+  text-align: center;
+}
+
+.switch-text a {
+  color: var(--blue);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.lang-toggle-btn {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 8px;
+  color: var(--blue);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.lang-toggle-btn:hover {
+  background: var(--line);
+}

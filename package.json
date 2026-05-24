@@ -1,0 +1,21 @@
+{
+  "name": "primelab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PrimeLab Node.js + Express web app for prime search, primality testing, and RSA experiments.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js && node --check src/prime.js && node --check src/rsa.js && node --check src/history.js && node --check src/utils.js && node --check src/chatKnowledge.js && node --check src/worker.js && node --check scripts/validate-core.js && node --check public/app.js && node --check public/js/shared.js && node --check public/js/chatbot.js && node --check public/js/auth.js && node --check public/js/prime-check.js && node --check public/js/prime-search.js && node --check public/js/rsa-keygen.js && node --check public/js/rsa-crypto.js && node --check public/js/history.js && node --check public/js/downloads.js",
+    "test": "npm run check && node scripts/validate-core.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "express": "^4.19.2",
+    "express-rate-limit": "^8.5.2",
+    "jsonwebtoken": "^9.0.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

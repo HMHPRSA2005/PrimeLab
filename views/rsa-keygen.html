@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tạo khóa RSA | PrimeLab</title>
+    <link rel="stylesheet" href="/css/dashboard.css" />
+  </head>
+  <body>
+    <div class="app-layout">
+      <aside class="sidebar">
+        <a class="brand" href="/dashboard"><img src="/assets/logo_primelab.png" alt="Logo" class="brand-logo"><span><strong>PrimeLab</strong><small>Cyber crypto lab</small></span></a>
+        <nav class="sidebar-nav">
+          <a data-nav href="/dashboard" data-i18n="nav_overview">Tổng quan</a>
+          <a data-nav href="/prime-check" data-i18n="nav_prime_check">Kiểm tra số nguyên tố</a>
+          <a data-nav href="/prime-search" data-i18n="nav_prime_search">Tìm kiếm số nguyên tố</a>
+          <a data-nav href="/rsa-keygen" data-i18n="nav_rsa_keygen">Tạo khóa RSA</a>
+          <a data-nav href="/rsa-crypto" data-i18n="nav_rsa_crypto">Mã hóa / Giải mã RSA</a>
+          <a data-nav href="/history" data-i18n="nav_history">Nhật ký kết quả</a>
+          <a data-nav href="/downloads" data-i18n="nav_downloads">Tải xuống</a>
+        </nav>
+        <div class="sidebar-footer"><button class="logout-btn" data-logout type="button" data-i18n="logout">Đăng xuất</button></div>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div><h1 data-i18n="title_rsa_keygen">Tạo khóa RSA</h1><p data-i18n="desc_rsa_keygen">Khởi tạo bộ tham số khóa RSA (p, q, n, e, d).</p></div>
+          <div class="topbar-actions">
+            <button id="lang-toggle" class="lang-toggle-btn">VI/EN</button>
+            <span class="user-pill" data-session-user></span>
+          </div>
+        </header>
+        <section class="content grid">
+          <article class="card">
+            <p class="warning">Khóa RSA ở đây chỉ phục vụ học tập/demo, không dùng cho bảo mật production.</p>
+            <form id="rsa-keygen-form">
+              <div class="form-grid">
+                <label class="field"><span>Độ dài bit của p và q</span><select name="primeBits"><option>4</option><option>8</option><option>16</option><option>32</option><option>64</option><option>128</option><option>256</option><option selected>512</option><option>1024</option><option>2048</option><option>4096</option></select></label>
+                <label class="field"><span>Số vòng kiểm tra</span><select name="rounds"><option>16</option><option>32</option><option>50</option><option selected>64</option></select></label>
+                <label class="field"><span>Số mũ công khai e</span><input name="publicExponent" value="65537" /></label>
+              </div>
+              <button class="primary-btn" type="submit">Tạo khóa RSA</button>
+              <p class="error-box" data-error hidden></p>
+            </form>
+          </article>
+          <section id="result-section" class="grid hidden">
+            <div id="key-fields" class="grid two"></div>
+          </section>
+        </section>
+      </main>
+    </div>
+    <script src="/js/shared.js"></script>
+    <script src="/js/rsa-keygen.js"></script>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+[
+  {
+    "fullName": "Hung Ha",
+    "email": "hamanhhunguetcn1@gmail.com",
+    "password": "$2b$10$D5C.HRMkeDrsHgzoZ/3CNOMstXHhG.rtjUPd1ehLn0.jLn1H4Ltg.",
+    "createdAt": "2026-05-16T05:43:42.488Z"
+  },
+  {
+    "fullName": "Hun Ha",
+    "email": "manhhunguet@gmail.com",
+    "password": "$2b$10$3c/mIFH0lOsuIo35zMLMMO1.7L1zB6YQsJX2SHfaqnut5DQr1GjjW",
+    "createdAt": "2026-05-17T23:58:48.986Z"
+  }
+]
