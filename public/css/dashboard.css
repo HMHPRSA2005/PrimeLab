@@ -7,6 +7,7 @@
   --muted: #64748b;
   --line: #dbeafe;
   --bg: #f8fafc;
+  --surface: #ffffff;
   --soft-blue: #eff6ff;
   --danger: #ef4444;
   --success: #0e7490;
@@ -21,7 +22,7 @@
 
 body {
   margin: 0;
-  min-width: 1200px;
+  min-width: 0;
   min-height: 100vh;
   color: var(--ink);
   background:
@@ -38,7 +39,7 @@ textarea {
 
 .app-layout {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 280px minmax(0, 1fr);
   min-height: 100vh;
 }
 
@@ -136,14 +137,16 @@ textarea {
 }
 
 .main {
+  min-width: 0;
   padding: 24px 40px 48px;
 }
 
 .topbar {
-  height: 72px;
+  min-height: 72px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 18px;
   border: 1px solid var(--line);
   border-radius: 20px;
   padding: 0 24px;
@@ -186,11 +189,12 @@ textarea {
 }
 
 .grid.three {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .card,
 .action-card {
+  min-width: 0;
   border: 1px solid var(--line);
   border-radius: 20px;
   padding: 24px;
@@ -235,6 +239,7 @@ textarea {
 .pipeline {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
   padding: 20px;
   border-radius: 16px;
@@ -360,14 +365,14 @@ button:disabled {
 
 .result-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
   margin-top: 20px;
 }
 
 .result-message {
   margin: 14px 0 0;
-  color: var(--text);
+  color: var(--ink);
   font-weight: 700;
   line-height: 1.5;
 }
@@ -415,12 +420,14 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 12px;
   margin: 18px 0 8px;
 }
 
 .tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -452,6 +459,7 @@ button:disabled {
 
 .table {
   width: 100%;
+  min-width: 760px;
   border-collapse: collapse;
 }
 
@@ -501,6 +509,8 @@ button:disabled {
 .topbar-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 16px;
 }
 .lang-toggle-btn {
@@ -516,4 +526,126 @@ button:disabled {
 }
 .lang-toggle-btn:hover {
   background: var(--line);
+}
+
+@media (max-width: 1180px) {
+  .app-layout {
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+
+  .sidebar {
+    padding: 20px 16px;
+  }
+
+  .main {
+    padding: 22px 24px 40px;
+  }
+
+  .grid.three,
+  .result-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  body {
+    background: var(--bg);
+  }
+
+  .app-layout {
+    display: block;
+  }
+
+  .sidebar {
+    position: relative;
+    height: auto;
+    padding: 16px;
+  }
+
+  .brand {
+    margin-bottom: 18px;
+  }
+
+  .sidebar-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sidebar-footer {
+    position: static;
+    margin-top: 16px;
+  }
+
+  .main {
+    padding: 18px 16px 32px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 18px;
+  }
+
+  .topbar h1 {
+    font-size: 20px;
+  }
+
+  .topbar-actions {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .grid.two,
+  .grid.three,
+  .result-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card,
+  .action-card {
+    border-radius: 16px;
+    padding: 18px;
+  }
+
+  .card {
+    overflow-x: auto;
+  }
+
+  .tabs {
+    gap: 8px;
+  }
+
+  .tab-btn,
+  .primary-btn,
+  .secondary-btn,
+  .danger-btn,
+  .download-card a {
+    min-height: 44px;
+    height: auto;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 520px) {
+  .sidebar-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-logo {
+    width: 52px;
+    height: 52px;
+  }
+
+  .copy-row {
+    align-items: stretch;
+  }
+
+  .copy-row .secondary-btn,
+  .copy-row .danger-btn,
+  .download-card a {
+    width: 100%;
+  }
+
+  .user-pill {
+    overflow-wrap: anywhere;
+  }
 }

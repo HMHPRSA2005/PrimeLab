@@ -1,11 +1,12 @@
 (function () {
   const form = document.querySelector("[data-auth-form]");
   const errorBox = document.querySelector("[data-error]");
+  const submitButton = form?.querySelector("button[type='submit']");
   if (!form) return;
 
   PrimeLab.initChatbotWidget?.();
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     PrimeLab.showError(errorBox, "");
 
@@ -35,24 +36,28 @@
         return;
       }
 
-      PrimeLab.apiPost("/api/auth/register", { fullName, email, password })
-        .then((payload) => {
-          PrimeLab.setSession(payload.email, payload.fullName, payload.token);
-          window.location.href = "/dashboard";
-        })
-        .catch((err) => {
-          PrimeLab.showError(errorBox, err.message);
-        });
+      PrimeLab.showLoading(submitButton, true, "Đang đăng ký...");
+      try {
+        const payload = await PrimeLab.apiPost("/api/auth/register", { fullName, email, password });
+        PrimeLab.setSession(payload.email, payload.fullName, payload.token);
+        window.location.href = "/dashboard";
+      } catch (err) {
+        PrimeLab.showError(errorBox, err.message);
+      } finally {
+        PrimeLab.showLoading(submitButton, false);
+      }
       return;
     }
 
-    PrimeLab.apiPost("/api/auth/login", { email, password })
-      .then((payload) => {
-        PrimeLab.setSession(payload.email, payload.fullName, payload.token);
-        window.location.href = "/dashboard";
-      })
-      .catch((err) => {
-        PrimeLab.showError(errorBox, "Sai email hoặc mật khẩu.");
-      });
+    PrimeLab.showLoading(submitButton, true, "Đang đăng nhập...");
+    try {
+      const payload = await PrimeLab.apiPost("/api/auth/login", { email, password });
+      PrimeLab.setSession(payload.email, payload.fullName, payload.token);
+      window.location.href = "/dashboard";
+    } catch (err) {
+      PrimeLab.showError(errorBox, "Sai email hoặc mật khẩu.");
+    } finally {
+      PrimeLab.showLoading(submitButton, false);
+    }
   });
 })();
