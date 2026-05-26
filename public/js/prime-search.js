@@ -14,7 +14,6 @@
 
   if (!form) return;
 
-  // Load saved state
   const savedState = PrimeLab.loadState("prime-search");
   if (savedState) {
     if (savedState.inputs) {
@@ -40,6 +39,7 @@
     const data = new FormData(form);
     const inputs = Object.fromEntries(data.entries());
     const maxAttempts = Number(data.get("maxAttempts"));
+
     if (!Number.isInteger(maxAttempts) || maxAttempts < 0) {
       PrimeLab.showError(errorBox, "Số lần thử tối đa phải là số nguyên không âm.");
       return;
@@ -54,6 +54,7 @@
         rounds: Number(data.get("rounds")),
         maxAttempts,
       });
+
       renderResult(response.result);
       PrimeLab.saveState("prime-search", { inputs, result: response.result });
     } catch (error) {
@@ -67,13 +68,16 @@
     resultMetrics.innerHTML = [
       ["Kết quả", result.primality === "proven" ? "đã chứng minh nguyên tố" : "nguyên tố xác suất"],
       ["Thuật toán", result.algorithm || result.method || "không rõ"],
-      ["Phương pháp", result.method || result.selectedMethod || "auto"],
+      ["Phương pháp", result.proofMethod || result.method || result.selectedMethod || "auto"],
       ["Chứng chỉ", result.certificateType || "miller_rabin_witnesses"],
-      ["Xác minh", result.verificationMode || result.certificateType || "không rõ"],
       ["Độ dài bit", result.bits],
       ["Số vòng yêu cầu", result.requestedRounds ?? result.rounds],
-      ["Số vòng JS thực chạy", result.rounds],
+      ["Số vòng thực chạy", result.rounds],
       ["Số lần thử", result.attempts],
+      ...(result.parallelWorkers ? [
+        ["Worker song song", result.parallelWorkers],
+        ["Attempts worker thang", result.winnerAttempts],
+      ] : []),
       ["Độ sâu chứng chỉ", result.certificateDepth || 0],
       ["Thời gian", `${Math.round(Number(result.elapsedSeconds) * 1000)} ms`],
     ].map(([label, value]) => `
@@ -85,6 +89,7 @@
 
     primeDec.value = result.primeDec;
     primeHex.value = result.primeHex;
+
     if (result.certificate) {
       certificateRow.classList.remove("hidden");
       primeCertificate.classList.remove("hidden");
@@ -94,6 +99,7 @@
       primeCertificate.classList.add("hidden");
       primeCertificate.value = "";
     }
+
     resultSection.classList.remove("hidden");
     PrimeLab.bindCopyButtons(resultSection);
 
@@ -103,74 +109,41 @@
   }
 
   function normalizeMethodValue(value) {
-    if (value === "probable") return "miller_rabin";
-    if (value === "native") return "hybrid";
-    if (value === "provable") return "pocklington";
-    if (value === "baillie_psw" || value === "lucas_lehmer") return "miller_rabin";
-    return value;
+    if (value === "pocklington" || value === "auto") return value;
+    return "miller-rabin";
   }
 
   function updateAlgorithmHint() {
     if (!algorithmHint) return;
 
     const bits = Number(form.elements.bits?.value || 0);
-    const method = String(form.elements.method?.value || "auto");
-    const isAuto = method === "auto";
-    const isReferenceDemo = bits === 16384;
-    const autoAlgorithm = bits <= 512
-      ? "Nguyên tố có chứng chỉ"
-      : isReferenceDemo
-        ? "Demo prime rất lớn"
-      : "Tìm prime nhanh";
+    const method = normalizeMethodValue(form.elements.method?.value || "auto");
+    const autoAlgorithm = bits <= 512 ? "Pocklington có chứng chỉ" : "Miller-Rabin";
     const methodLabels = {
       auto: autoAlgorithm,
-      hybrid: autoAlgorithm,
-      miller_rabin: "Miller-Rabin",
-      pocklington: "Chứng chỉ Pocklington",
+      pocklington: "Pocklington có chứng chỉ",
+      "miller-rabin": "Miller-Rabin",
     };
-
-    const details = isAuto
-      ? "Auto sẽ chọn cách chạy phù hợp với độ dài bit bạn chọn."
-      : method === "pocklington"
-        ? "Phù hợp khi cần kết quả có chứng chỉ ở mức bit nhỏ."
-        : method === "hybrid"
-          ? "Ưu tiên tốc độ để demo các số lớn."
-          : "Tự sinh và tự kiểm tra, phù hợp để trình bày thuật toán.";
-
-    const displayDetails = getAdaptiveSearchDetails(bits, method, isAuto, details);
 
     algorithmHint.innerHTML = `
       <strong>Thuật toán sẽ dùng: ${methodLabels[method] || autoAlgorithm}</strong>
-      <span>${displayDetails}</span>
+      <span>${getSearchDetails(bits, method)}</span>
     `;
   }
 
-  function getAdaptiveSearchDetails(bits, method, isAuto, fallbackDetails) {
-    if ((isAuto || method === "hybrid") && bits === 16384) {
-      return "Chế độ này giữ thời gian chạy hợp lý cho phần demo 16384-bit.";
+  function getSearchDetails(bits, method) {
+    if (method === "auto") {
+      return "Hệ thống sẽ tự động chọn Pocklington cho những số từ 512 bit đổ lại; với số lớn hơn sẽ chuyển sang Miller-Rabin để chạy nhanh hơn.";
     }
 
-    if ((isAuto || method === "hybrid") && bits === 8192) {
-      return "Mức này phù hợp để demo tìm prime lớn mà vẫn chờ được.";
+    if (method === "pocklington" && bits > 512) {
+      return "Pocklington vẫn chạy được với mức bit này, nhưng thời gian trả lời có thể lâu hơn rõ rệt vì hệ thống phải tạo chứng chỉ nguyên tố.";
     }
 
-    if (isAuto) {
-      if (bits > 8192) {
-        return "Auto sẽ ưu tiên thời gian chạy ổn định cho số rất lớn.";
-      }
-      if (bits > 4096) {
-        return "Auto cân bằng giữa tốc độ và phần kiểm tra thuật toán.";
-      }
-      return fallbackDetails;
+    if (method === "pocklington") {
+      return "Với các số từ 512 bit đổ lại, Pocklington thường chạy nhanh và cho kết quả proven/certified, tức là chắc chắn hơn kiểm tra xác suất.";
     }
 
-    if (method === "hybrid") {
-      if (bits > 8192) {
-        return "Hybrid giúp phần demo số rất lớn không bị kéo quá lâu.";
-      }
-      return "Hybrid chạy nhanh hơn cho các số lớn.";
-    }
-
-    return fallbackDetails;
+    return "Miller-Rabin phù hợp khi cần tìm số lớn nhanh; kết quả là probable prime với số vòng kiểm tra mặc định là 50.";
   }
 })();

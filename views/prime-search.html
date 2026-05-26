@@ -9,7 +9,10 @@
   <body>
     <div class="app-layout">
       <aside class="sidebar">
-        <a class="brand" href="/dashboard"><img src="/assets/logo_primelab.png" alt="Logo" class="brand-logo"><span><strong>PrimeLab</strong><small>Cyber crypto lab</small></span></a>
+        <a class="brand" href="/dashboard">
+          <img src="/assets/logo_primelab.png" alt="Logo" class="brand-logo" />
+          <span><strong>PrimeLab</strong><small>Cyber crypto lab</small></span>
+        </a>
         <nav class="sidebar-nav">
           <a data-nav href="/dashboard" data-i18n="nav_overview">Tổng quan</a>
           <a data-nav href="/prime-check" data-i18n="nav_prime_check">Kiểm tra số nguyên tố</a>
@@ -19,39 +22,91 @@
           <a data-nav href="/history" data-i18n="nav_history">Nhật ký kết quả</a>
           <a data-nav href="/downloads" data-i18n="nav_downloads">Tải xuống</a>
         </nav>
-        <div class="sidebar-footer"><button class="logout-btn" data-logout type="button" data-i18n="logout">Đăng xuất</button></div>
+        <div class="sidebar-footer">
+          <button class="logout-btn" data-logout type="button" data-i18n="logout">Đăng xuất</button>
+        </div>
       </aside>
+
       <main class="main">
         <header class="topbar">
-          <div><h1 data-i18n="title_prime_search">Tìm kiếm số nguyên tố</h1><p data-i18n="desc_prime_search">Tạo số nguyên tố lớn và kiểm tra ngay trong hệ thống.</p></div>
+          <div>
+            <h1 data-i18n="title_prime_search">Tìm kiếm số nguyên tố</h1>
+            <p data-i18n="desc_prime_search">Tạo số nguyên tố bằng BigInt native và Worker Thread.</p>
+          </div>
           <div class="topbar-actions">
             <button id="lang-toggle" class="lang-toggle-btn">VI/EN</button>
             <span class="user-pill" data-session-user></span>
           </div>
         </header>
+
         <section class="content grid">
           <article class="card">
-            <p class="warning">Chế độ Auto chọn cách chạy phù hợp để demo mượt mà, kể cả với số rất lớn.</p>
+            <p class="warning">Ở chế độ Auto, hệ thống sẽ tự động chọn Pocklington cho những số từ 512 bit đổ lại.</p>
             <form id="prime-search-form">
               <div class="form-grid">
-                <label class="field"><span>Độ dài bit</span><select name="bits"><option>4</option><option>8</option><option>16</option><option>32</option><option>64</option><option>128</option><option>256</option><option>512</option><option>1024</option><option>2048</option><option selected>4096</option><option>8192</option><option>16384</option></select></label>
-                <label class="field"><span>Phương pháp</span><select name="method"><option value="auto" selected>Auto đề xuất</option><option value="pocklington">Pocklington có chứng chỉ <=512 bit</option><option value="hybrid">Hybrid tăng tốc + Miller-Rabin</option><option value="miller_rabin">Miller-Rabin thuần</option></select></label>
-                <label class="field"><span>Số vòng kiểm tra</span><select name="rounds"><option>16</option><option>32</option><option>50</option><option selected>64</option><option>96</option><option>128</option></select></label>
-                <label class="field"><span>Số lần thử tối đa</span><input name="maxAttempts" type="number" min="0" value="10000" /></label>
+                <label class="field">
+                  <span>Độ dài bit</span>
+                  <select name="bits">
+                    <option>16</option>
+                    <option>32</option>
+                    <option>64</option>
+                    <option>128</option>
+                    <option>256</option>
+                    <option>512</option>
+                    <option>1024</option>
+                    <option>2048</option>
+                    <option selected>4096</option>
+                    <option>8192</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Phương pháp</span>
+                  <select name="method">
+                    <option value="auto" selected>Auto</option>
+                    <option value="pocklington">Pocklington có chứng chỉ</option>
+                    <option value="miller-rabin">Miller-Rabin</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Số vòng kiểm tra</span>
+                  <select name="rounds">
+                    <option>16</option>
+                    <option>32</option>
+                    <option selected>50</option>
+                    <option>64</option>
+                    <option>96</option>
+                    <option>128</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Số lần thử tối đa (0 = không giới hạn)</span>
+                  <input name="maxAttempts" type="number" min="0" value="100000" />
+                </label>
               </div>
               <div id="algorithm-hint" class="recommendation"></div>
               <button class="primary-btn" type="submit">Bắt đầu tìm</button>
               <p class="error-box" data-error hidden></p>
             </form>
           </article>
+
           <article id="result-section" class="card hidden">
-            <p class="eyebrow">Kết quả</p><h2>Số nguyên tố tìm được</h2>
+            <p class="eyebrow">Kết quả</p>
+            <h2>Số nguyên tố tìm được</h2>
             <div id="result-metrics" class="result-grid"></div>
-            <div class="copy-row"><strong>Dạng thập phân</strong><button class="secondary-btn" data-copy-target="#prime-dec" type="button">Sao chép</button></div>
+            <div class="copy-row">
+              <strong>Dạng thập phân</strong>
+              <button class="secondary-btn" data-copy-target="#prime-dec" type="button">Sao chép</button>
+            </div>
             <textarea id="prime-dec" class="code-area" readonly></textarea>
-            <div class="copy-row"><strong>Dạng hexadecimal</strong><button class="secondary-btn" data-copy-target="#prime-hex" type="button">Sao chép</button></div>
+            <div class="copy-row">
+              <strong>Dạng hexadecimal</strong>
+              <button class="secondary-btn" data-copy-target="#prime-hex" type="button">Sao chép</button>
+            </div>
             <textarea id="prime-hex" class="code-area" readonly></textarea>
-            <div class="copy-row" id="certificate-row"><strong>Chứng chỉ kiểm tra</strong><button class="secondary-btn" data-copy-target="#prime-certificate" type="button">Sao chép</button></div>
+            <div class="copy-row" id="certificate-row">
+              <strong>Chứng chỉ kiểm tra</strong>
+              <button class="secondary-btn" data-copy-target="#prime-certificate" type="button">Sao chép</button>
+            </div>
             <textarea id="prime-certificate" class="code-area" readonly></textarea>
           </article>
         </section>

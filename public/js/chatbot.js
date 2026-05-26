@@ -78,9 +78,15 @@
     setFormEnabled(false);
 
     try {
+      const headers = { "Content-Type": "application/json" };
+      const session = window.PrimeLab?.getSession?.();
+      if (session?.token) {
+        headers.Authorization = `Bearer ${session.token}`;
+      }
+
       const response = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({ messages: messages.filter((message) => !message.pending) }),
       });
       const payload = await response.json().catch(() => ({}));

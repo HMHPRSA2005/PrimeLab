@@ -6,7 +6,7 @@ PrimeLab là web app học tập và thực nghiệm mật mã, tập trung vào
 
 - Đăng ký, đăng nhập, xác thực JWT và phân tách dữ liệu theo người dùng.
 - Kiểm tra số nguyên tố bằng chia thử, Miller-Rabin và các chế độ kiểm tra/cấp chứng chỉ phù hợp theo kích thước bit.
-- Tìm số nguyên tố từ 2 đến 16384 bit, hỗ trợ chế độ auto, hybrid/native, Miller-Rabin và Pocklington cho số nhỏ.
+- Tìm số nguyên tố từ 2 đến 8192 bit, hỗ trợ chế độ auto, hybrid/native, Miller-Rabin và Pocklington cho số nhỏ.
 - Sinh khóa RSA từ cặp số nguyên tố `p`, `q`; xuất `n`, `phiN`, `lambdaN`, `e`, `d`.
 - Mã hóa, giải mã, ký số và xác minh chữ ký RSA.
 - Tính khóa bí mật `d` từ `e` và `n` bằng phân tích thừa số cho các modulus nhỏ/phù hợp demo.
@@ -77,4 +77,4 @@ Lệnh này kiểm tra cú pháp các file chính và chạy script validate lõ
 
 ## Lưu ý
 
-PrimeLab phục vụ học tập, demo và nghiên cứu thuật toán. Khóa RSA sinh bởi dự án không nên dùng cho hệ thống production. Các số 8192/16384 bit có thể mất thời gian tùy máy và chế độ tìm kiếm; dùng bit nhỏ hơn khi cần demo nhanh.
+PrimeLab phục vụ học tập, demo và nghiên cứu thuật toán. Khóa RSA sinh bởi dự án không nên dùng cho hệ thống production. Các số 8192 bit có thể mất thời gian tùy máy và chế độ tìm kiếm; dùng bit nhỏ hơn khi cần demo nhanh.

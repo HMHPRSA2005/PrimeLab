@@ -10,11 +10,14 @@ loadEnvFile();
 
 const {
   DEFAULT_BIT_LENGTH,
+  DEFAULT_MAX_ATTEMPTS,
   DEFAULT_MILLER_RABIN_ROUNDS,
   DEFAULT_PRIME_SEARCH_METHOD,
   MAX_SEARCH_BIT_LENGTH,
   bitLength,
+  normalizeSearchMethod,
   parseBigInt,
+  resolveSearchMethod,
 } = require("./src/prime");
 const {
   lcm,
@@ -58,22 +61,10 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_CHAT_MODEL = process.env.OPENAI_CHAT_MODEL || "gpt-5.5";
 const OPENAI_RESPONSES_URL = process.env.OPENAI_RESPONSES_URL || "https://api.openai.com/v1/responses";
 const CHAT_MAX_OUTPUT_TOKENS = readPositiveIntegerEnv("CHAT_MAX_OUTPUT_TOKENS", 2048, 256, 8192);
-const SEARCH_METHODS = new Set([
-  "auto",
-  "fast",
-  "hybrid",
-  "hybrid_accelerated",
-  "native",
-  "openssl",
-  "node_crypto",
-  "miller_rabin",
-  "mr",
-  "probable",
-  "certified",
-  "certified_small",
-  "provable",
-  "pocklington",
-]);
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const API_RATE_LIMIT_MAX = readPositiveIntegerEnv("API_RATE_LIMIT_MAX", 60, 10, 300);
+const CHAT_RATE_LIMIT_MAX = readPositiveIntegerEnv("CHAT_RATE_LIMIT_MAX", 24, 3, 120);
+const PRIME_SEARCH_WORKERS = readPositiveIntegerEnv("PRIME_SEARCH_WORKERS", 8, 1, 32);
 
 ensureDataFiles();
 
@@ -119,48 +110,183 @@ function readPositiveIntegerEnv(key, fallback, min, max) {
 
 app.use(express.json({ limit: "2mb" }));
 
-const apiLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 30, // Limit each IP to 30 requests per `window` (here, per minute)
-  message: { ok: false, error: "Quá nhiều yêu cầu, vui lòng thử lại sau." },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+function rateLimitMessage(error) {
+  return { ok: false, success: false, error };
+}
 
-const heavyTaskLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 5, // Limit heavy tasks
-  message: { ok: false, error: "Quá nhiều tác vụ nặng, vui lòng thử lại sau." },
+const apiLimiter = rateLimit({
+  windowMs: RATE_LIMIT_WINDOW_MS,
+  max: API_RATE_LIMIT_MAX,
+  message: rateLimitMessage("Quá nhiều yêu cầu, vui lòng thử lại sau."),
   standardHeaders: true,
   legacyHeaders: false,
 });
 
 const chatLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 12,
-  message: { ok: false, error: "Quá nhiều tin nhắn, vui lòng thử lại sau." },
+  windowMs: RATE_LIMIT_WINDOW_MS,
+  max: CHAT_RATE_LIMIT_MAX,
+  message: rateLimitMessage("Quá nhiều tin nhắn, vui lòng thử lại sau."),
   standardHeaders: true,
   legacyHeaders: false,
 });
 
 function runTaskInWorker(type, payload) {
   return new Promise((resolve, reject) => {
+    let settled = false;
     const worker = new Worker(path.join(__dirname, "src/worker.js"), {
       workerData: { type, payload },
     });
+
+    function finish(error, result) {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      worker.removeAllListeners();
+      worker.terminate().catch(() => {});
+
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result);
+      }
+    }
+
     worker.on("message", (message) => {
       if (message.ok) {
-        resolve(message.result);
+        finish(null, message.result);
       } else {
-        reject(new Error(message.error));
+        finish(new Error(message.error));
       }
     });
-    worker.on("error", reject);
+    worker.on("error", (error) => finish(error));
     worker.on("exit", (code) => {
-      if (code !== 0) {
-        reject(new Error(`Worker stopped with exit code ${code}`));
+      if (!settled && code !== 0) {
+        finish(new Error(`Worker stopped with exit code ${code}`));
       }
     });
+  });
+}
+
+function runPrimeSearchTask(payload) {
+  if (shouldRunPrimeSearchInParallel(payload)) {
+    return runPrimeSearchInParallel(payload);
+  }
+
+  return runTaskInWorker("prime.search", payload);
+}
+
+function shouldRunPrimeSearchInParallel(payload) {
+  return PRIME_SEARCH_WORKERS > 1 && resolveSearchMethod(payload.bits, payload.method) === "miller-rabin";
+}
+
+function resolvePrimeSearchWorkerCount(maxAttempts) {
+  if (maxAttempts > 0) {
+    return Math.max(1, Math.min(PRIME_SEARCH_WORKERS, maxAttempts));
+  }
+
+  return PRIME_SEARCH_WORKERS;
+}
+
+function runPrimeSearchInParallel(payload) {
+  return new Promise((resolve, reject) => {
+    const workerCount = resolvePrimeSearchWorkerCount(payload.maxAttempts);
+    const maxAttemptsPerWorker = payload.maxAttempts > 0
+      ? Math.ceil(payload.maxAttempts / workerCount)
+      : 0;
+    const startedAt = Date.now();
+    const workers = new Map();
+    const finishedWorkerIds = new Set();
+    const errors = [];
+    let completedWorkers = 0;
+    let completedWorkerAttempts = 0;
+    let settled = false;
+
+    function cleanup() {
+      for (const worker of workers.values()) {
+        worker.removeAllListeners();
+        worker.terminate().catch(() => {});
+      }
+      workers.clear();
+    }
+
+    function finishWithResult(result) {
+      if (settled) {
+        return;
+      }
+
+      settled = true;
+      cleanup();
+
+      const winnerAttempts = Number(result?.attempts || 0);
+      resolve({
+        ...result,
+        algorithm: `${result.algorithm || "Miller-Rabin"} (${workerCount} workers)`,
+        attempts: completedWorkerAttempts + winnerAttempts,
+        completedWorkerAttempts,
+        elapsedSeconds: Number(((Date.now() - startedAt) / 1000).toFixed(6)),
+        maxAttemptsPerWorker,
+        parallelWorkers: workerCount,
+        searchMode: "parallel-worker-pool",
+        winnerAttempts,
+      });
+    }
+
+    function finishWorker(workerId, error) {
+      if (settled || finishedWorkerIds.has(workerId)) {
+        return;
+      }
+
+      finishedWorkerIds.add(workerId);
+      const worker = workers.get(workerId);
+      if (worker) {
+        worker.removeAllListeners();
+        workers.delete(workerId);
+      }
+
+      completedWorkers += 1;
+      if (payload.maxAttempts > 0) {
+        completedWorkerAttempts += maxAttemptsPerWorker;
+      }
+      if (error) {
+        errors.push(error.message || String(error));
+      }
+
+      if (completedWorkers === workerCount) {
+        settled = true;
+        cleanup();
+        reject(new Error(errors[0] || "could not find a probable prime in parallel workers"));
+      }
+    }
+
+    for (let workerIndex = 0; workerIndex < workerCount; workerIndex += 1) {
+      const workerPayload = {
+        ...payload,
+        maxAttempts: maxAttemptsPerWorker,
+        method: "miller-rabin",
+      };
+      const worker = new Worker(path.join(__dirname, "src/worker.js"), {
+        workerData: { type: "prime.search", payload: workerPayload },
+      });
+      workers.set(workerIndex, worker);
+
+      worker.on("message", (message) => {
+        if (message.ok) {
+          finishWithResult(message.result);
+        } else {
+          finishWorker(workerIndex, new Error(message.error));
+        }
+      });
+      worker.on("error", (error) => finishWorker(workerIndex, error));
+      worker.on("exit", (code) => {
+        if (!finishedWorkerIds.has(workerIndex)) {
+          const message = code === 0
+            ? "Worker stopped before returning a search result"
+            : `Worker stopped with exit code ${code}`;
+          finishWorker(workerIndex, new Error(message));
+        }
+      });
+    }
   });
 }
 
@@ -297,12 +423,13 @@ app.get("/downloads", (request, response) => sendView(response, "downloads.html"
 app.use(express.static(publicDirectory));
 
 function sendOk(response, payload) {
-  response.json({ ok: true, ...toJsonBigInt(payload) });
+  response.json({ ok: true, success: true, ...toJsonBigInt(payload) });
 }
 
 function sendError(response, statusCode, error) {
   response.status(statusCode).json({
     ok: false,
+    success: false,
     error: error instanceof Error ? error.message : String(error),
   });
 }
@@ -328,11 +455,11 @@ function readBigIntInput(value, fieldName) {
 }
 
 function readSearchMethod(value) {
-  const method = String(value || DEFAULT_PRIME_SEARCH_METHOD).trim().toLowerCase();
-  if (!SEARCH_METHODS.has(method)) {
-    throw badRequest("method must be auto, certified, hybrid, miller_rabin, or pocklington");
+  try {
+    return normalizeSearchMethod(value || DEFAULT_PRIME_SEARCH_METHOD);
+  } catch {
+    throw badRequest("method must be auto, pocklington, or miller-rabin");
   }
-  return method;
 }
 
 function readChatMessages(body) {
@@ -425,16 +552,36 @@ function wrapRoute(handler) {
   };
 }
 
-async function requestChatReply(messages) {
-  if (GEMINI_API_KEY) {
-    return await requestGeminiChatReply(messages);
+function readOptionalChatUser(authHeader) {
+  try {
+    const token = getBearerToken(authHeader);
+    return jwt.verify(token, JWT_SECRET);
+  } catch {
+    return null;
   }
-
-  return await requestOpenAIChatReply(messages);
 }
 
-async function requestGeminiChatReply(messages) {
-  const instructions = await buildChatSystemPrompt();
+function buildChatPromptOptions(chatUser) {
+  if (!chatUser || !chatUser.email) {
+    return {};
+  }
+
+  return {
+    userEmail: chatUser.email,
+    fullName: chatUser.fullName || "",
+  };
+}
+
+async function requestChatReply(messages, chatUser) {
+  if (GEMINI_API_KEY) {
+    return await requestGeminiChatReply(messages, chatUser);
+  }
+
+  return await requestOpenAIChatReply(messages, chatUser);
+}
+
+async function requestGeminiChatReply(messages, chatUser) {
+  const instructions = await buildChatSystemPrompt(buildChatPromptOptions(chatUser));
   const contents = messages.map((message) => ({
     role: message.role === "assistant" ? "model" : "user",
     parts: [{ text: message.content }],
@@ -472,12 +619,12 @@ async function requestGeminiChatReply(messages) {
   return appendLengthLimitNote(reply, payload.candidates?.[0]?.finishReason);
 }
 
-async function requestOpenAIChatReply(messages) {
+async function requestOpenAIChatReply(messages, chatUser) {
   if (!OPENAI_API_KEY) {
     throw new HttpError(503, "Thiếu OPENAI_API_KEY trên server. Vui lòng cấu hình biến môi trường này trước khi dùng chatbot.");
   }
 
-  const instructions = await buildChatSystemPrompt();
+  const instructions = await buildChatSystemPrompt(buildChatPromptOptions(chatUser));
   const input = messages.map((message) => ({
     role: message.role,
     content: message.content,
@@ -552,7 +699,8 @@ function extractGeminiResponseText(payload) {
 
 app.post("/api/chat", chatLimiter, wrapRoute(async (request, response) => {
   const messages = readChatMessages(request.body || {});
-  const reply = await requestChatReply(messages);
+  const chatUser = readOptionalChatUser(request.headers.authorization);
+  const reply = await requestChatReply(messages, chatUser);
   sendOk(response, {
     reply,
     provider: GEMINI_API_KEY ? "gemini" : "openai",
@@ -623,11 +771,11 @@ app.post("/api/prime/check", apiLimiter, wrapRoute(async (request, response) => 
   sendOk(response, payload);
 }));
 
-app.post("/api/prime/search", heavyTaskLimiter, wrapRoute(async (request, response) => {
+app.post("/api/prime/search", wrapRoute(async (request, response) => {
   const bitLengthValue = readIntegerInput(
     request.body.bits,
     DEFAULT_BIT_LENGTH,
-    2,
+    16,
     MAX_SEARCH_BIT_LENGTH,
     "bits",
   );
@@ -638,41 +786,48 @@ app.post("/api/prime/search", heavyTaskLimiter, wrapRoute(async (request, respon
     256,
     "rounds",
   );
-  const maxAttempts = readIntegerInput(
+  const rawMaxAttempts = readIntegerInput(
     request.body.maxAttempts,
+    DEFAULT_MAX_ATTEMPTS,
     0,
-    0,
-    1_000_000,
+    Number.MAX_SAFE_INTEGER,
     "maxAttempts",
   );
+  const maxAttempts = rawMaxAttempts;
   const method = readSearchMethod(request.body.method);
 
-  const searchResult = await runTaskInWorker("prime.search", {
+  const searchResult = await runPrimeSearchTask({
     bits: bitLengthValue,
     rounds,
     maxAttempts,
     method,
   });
   
-  const record = await appendJsonRecord(primesFilePath, {
+  const recordPayload = {
     id: `${Date.now()}`,
     createdAt: nowIso(),
     user: request.user.email,
     ...searchResult,
-  });
+  };
 
-  await addHistoryRecord(
-    "prime.search",
-    "success",
-    `Found ${searchResult.bits}-bit prime with ${searchResult.algorithm || searchResult.method} in ${searchResult.attempts} attempts`,
-    record,
-    request.user.email
-  );
+  try {
+    const record = await appendJsonRecord(primesFilePath, recordPayload);
+    await addHistoryRecord(
+      "prime.search",
+      "success",
+      `Found ${searchResult.bits}-bit prime with ${searchResult.algorithm || searchResult.method} in ${searchResult.attempts} attempts`,
+      record,
+      request.user.email
+    );
+  } catch (error) {
+    console.error(`Could not save prime search history: ${error.message}`);
+  }
+
   sendOk(response, { result: searchResult });
 }));
 
-app.post("/api/rsa/keygen", heavyTaskLimiter, wrapRoute(async (request, response) => {
-  const primeBits = readIntegerInput(request.body.primeBits, 256, 4, 4096, "primeBits");
+app.post("/api/rsa/keygen", wrapRoute(async (request, response) => {
+  const primeBits = readIntegerInput(request.body.primeBits, 256, 4, 8192, "primeBits");
   const rounds = readIntegerInput(
     request.body.rounds,
     DEFAULT_MILLER_RABIN_ROUNDS,
@@ -785,7 +940,7 @@ app.post("/api/rsa/verify", apiLimiter, wrapRoute(async (request, response) => {
   sendOk(response, payload);
 }));
 
-app.post("/api/rsa/mod-inverse", heavyTaskLimiter, wrapRoute(async (request, response) => {
+app.post("/api/rsa/mod-inverse", wrapRoute(async (request, response) => {
   const e = readBigIntInput(request.body.e, "e");
   const n = readBigIntInput(request.body.n, "n");
   
